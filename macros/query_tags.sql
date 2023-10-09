@@ -30,7 +30,7 @@
     {% if model.resource_type == 'model' %}
 
         {# 
-           Lines XX - YY would have been a macro called `bruce_force_cluster_list`, but I kept
+           Lines 38 - 46 would have been a macro called `bruce_force_cluster_list`, but I kept
            getting a "'brute_force_cluster_list' is undefined" error, so I gave up and shoved
            the logic in here. The `cluster_by` config accepts a string or list, and this handles
            either conditions and "returns" it as a list to the JSON object.
