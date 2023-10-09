@@ -28,6 +28,23 @@
 
     {# We have to bring is_incremental through here because its not available in the comment context #}
     {% if model.resource_type == 'model' %}
+
+        {# 
+           Lines XX - YY would have been a macro called `bruce_force_cluster_list`, but I kept
+           getting a "'brute_force_cluster_list' is undefined" error, so I gave up and shoved
+           the logic in here. The `cluster_by` config accepts a string or list, and this handles
+           either conditions and "returns" it as a list to the JSON object.
+        #}
+        {%- set cluster_by = model.config.cluster_by | string -%}
+
+        {%- if '[' in cluster_by -%}
+
+            {%- set cluster_by = cluster_by | replace('[', '') | replace(']', '') | replace("'", '') -%}
+
+        {%- endif -%}
+
+        {%- set cluster_by = cluster_by.split(",") | map('trim') | list -%}
+        
         {%- do query_tag.update(
             is_incremental=is_incremental(),
             model=model.name,
@@ -35,7 +52,8 @@
             model_database=model.database|string,
             model_schema=model.schema|string,
             model_materialized=model.config.materialized|string,
-            model_fqn=tojson(model.fqn)
+            model_cluster_key=cluster_by,
+            model_fqn=model.fqn
         ) -%}
     {% endif %}
 
